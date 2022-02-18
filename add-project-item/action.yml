@@ -1,0 +1,16 @@
+name: Add project item
+description: Adds a project item to a project board.
+inputs:
+  board_id:
+    description: 'The node ID of the project board.'
+    required: true
+  item_id:
+    description: 'The node ID of the item you want to add.'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        gh api graphql -f query='mutation($project:ID!, $issue:ID!) { addProjectNextItem(input: {projectId: $project, contentId: $issue}) { projectNextItem { id }  } }' -f project=${{ inputs.board_id }} -f issue=${{ inputs.item_id }}
+      shell: bash
+      if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
